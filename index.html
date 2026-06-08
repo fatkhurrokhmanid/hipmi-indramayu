@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>BPC HIPMI Kabupaten Indramayu - Himpunan Pengusaha Muda Indonesia</title>
+    <!-- Tailwind CSS + Font Awesome + Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Swiper JS untuk Slider -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Chart.js untuk dashboard CRM -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        body {
+            background: #fefcf5;
+            scroll-behavior: smooth;
+        }
+        /* Warna Utama: Kuning, Gradasi Hijau */
+        .bg-primary {
+            background: linear-gradient(135deg, #f59f0b7c 0%, #08855b67 100%);
+        }
+        .text-primary {
+            color: #F59E0B;
+        }
+        .border-primary {
+            border-color: #F59E0B;
+        }
+        .hover\:bg-primary-dark:hover {
+            background: linear-gradient(135deg, #d977069d 0%, #05966834 100%);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #F59E0B 0%, #10B981 100%);
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #D97706 0%, #059669 100%);
+            transform: translateY(-1px);
+        }
+        .glass-card {
+            background: rgba(156, 172, 11, 0);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(2, 20, 18, 0.199);
+        }
+        .nav-active {
+            border-bottom: 3px solid #F59E0B;
+            color: #F59E0B;
+            font-weight: 600;
+        }
+        .crm-table-wrapper {
+            overflow-x: auto;
+            border-radius: 1.5rem;
+        }
+        .animate-fadein {
+            animation: fadeIn 0.6s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        input, select, textarea {
+            transition: all 0.2s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
+            outline: none;
+            border-color: #F59E0B;
+        }
+        footer a:hover {
+            color: #F59E0B;
+        }
+        /* Custom Swiper Styles */
+        .swiper {
+            width: 100%;
+            height: 100%;
+            border-radius: 1.5rem;
+        }
+        .swiper-slide img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 1.5rem;
+        }
+        .swiper-pagination-bullet-active {
+            background: #F59E0B !important;
+        }
+        .swiper-button-next, .swiper-button-prev {
+            color: #F59E0B !important;
+            background: rgba(255,255,255,0.7);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            backdrop-filter: blur(4px);
+        }
+        .swiper-button-next:after, .swiper-button-prev:after {
+            font-size: 20px !important;
+            font-weight: bold;
+        }
+        /* Hero Background Image */
+        .hero-with-bg {
+            background-image: url('https://i.ibb.co.com/K4Fwjyy/hipmi-indramayu.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+        .hero-with-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(245,158,11,0.85) 0%, rgba(16,185,129,0.85) 100%);
+            z-index: 1;
+        }
+        .hero-with-bg > * {
+            position: relative;
+            z-index: 2;
+        }
+        /* Modal style */
+        .modal {
+            transition: opacity 0.25s ease;
+        }
+        .modal-card {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- NAVIGATION BAR MODERN -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 backdrop-blur-md bg-white/95">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo & Brand dengan Icon Logo yang bisa di-replace URL -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 flex items-center justify-center overflow-hidden">
+                        <img id="header-logo-icon" src="https://i.ibb.co.com/mr29LXQ6/logo-hipmi-indramayu.png" alt="Logo" class="w-full h-full object-contain">
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg text-gray-800">BPC HIPMI <span class="text-primary">Kab. Indramayu</span></h1>
+                        <p class="text-[11px] font-medium text-gray-500 -mt-1">Himpunan Pengusaha Muda Indonesia</p>
+                    </div>
+                </div>
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-1 xl:space-x-2">
+                    <a href="#" data-page="home" class="nav-link px-3 py-2 rounded-lg font-medium text-gray-700 hover:text-primary transition">Beranda</a>
+                    <a href="#" data-page="profile" class="nav-link px-3 py-2 rounded-lg font-medium text-gray-700 hover:text-primary transition">Profil</a>
+                    <a href="#" data-page="visimisi" class="nav-link px-3 py-2 rounded-lg font-medium text-gray-700 hover:text-primary transition">Visi & Misi</a>
+                    <a href="#" data-page="berita" class="nav-link px-3 py-2 rounded-lg font-medium text-gray-700 hover:text-primary transition">Berita</a>
+                    <a href="#" data-page="pendaftaran" class="nav-link px-3 py-2 rounded-lg font-medium text-gray-700 hover:text-primary transition">Pendaftaran</a>
+                    <a href="#" data-page="kontak" class="nav-link px-3 py-2 rounded-lg font-medium text-gray-700 hover:text-primary transition">Kontak</a>
+                    <a href="#" id="loginBtnNav" class="nav-link px-3 py-2 rounded-lg font-medium text-gray-700 hover:text-primary transition"><i class="fas fa-sign-in-alt mr-1"></i> Login</a>
+                </div>
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center gap-2">
+                    <button id="mobileLoginBtn" class="text-primary text-sm border px-3 py-1 rounded-full"><i class="fas fa-user"></i></button>
+                    <button id="mobile-menu-btn" class="text-gray-600 focus:outline-none">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Mobile dropdown menu -->
+            <div id="mobile-menu" class="md:hidden hidden pb-4 flex flex-col space-y-2">
+                <a href="#" data-page="home" class="nav-link-mobile block px-3 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-100">Beranda</a>
+                <a href="#" data-page="profile" class="nav-link-mobile block px-3 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-100">Profil</a>
+                <a href="#" data-page="visimisi" class="nav-link-mobile block px-3 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-100">Visi & Misi</a>
+                <a href="#" data-page="berita" class="nav-link-mobile block px-3 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-100">Berita</a>
+                <a href="#" data-page="pendaftaran" class="nav-link-mobile block px-3 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-100">Pendaftaran</a>
+                <a href="#" data-page="kontak" class="nav-link-mobile block px-3 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-100">Kontak</a>
+                <a href="#" id="mobileLoginNavLink" class="block px-3 py-2 rounded-lg font-medium text-primary hover:bg-gray-100"><i class="fas fa-sign-in-alt mr-1"></i> Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT (Dinamis via JS) -->
+    <main id="app-root" class="min-h-screen animate-fadein">
+        <!-- content akan diisi oleh JavaScript -->
+        <div class="flex justify-center items-center py-20">
+            <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-16 w-16"></div>
+        </div>
+    </main>
+
+    <!-- MODAL LOGIN -->
+    <div id="loginModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative mx-4 modal-card">
+            <button id="closeModalBtn" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
+            <div class="text-center mb-5">
+                <img src="https://i.ibb.co.com/mr29LXQ6/logo-hipmi-indramayu.png" class="w-16 mx-auto mb-2" alt="logo">
+                <h3 class="text-2xl font-bold text-gray-800">Login Area</h3>
+                <p class="text-sm text-gray-500">Akses khusus pengurus & admin</p>
+            </div>
+            <form id="loginFormModal">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-1">Username</label>
+                    <input type="text" id="loginUsername" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary" placeholder="admin" autocomplete="off">
+                </div>
+                <div class="mb-5">
+                    <label class="block text-gray-700 font-medium mb-1">Password</label>
+                    <input type="password" id="loginPassword" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary" placeholder="••••••">
+                </div>
+                <button type="submit" class="btn-primary w-full text-white py-2 rounded-xl font-semibold">Masuk Dashboard</button>
+                <p class="text-xs text-center text-gray-400 mt-4">*Demo: username: admin , password: admin123</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER MODERN -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-rocket text-primary"></i>
+                    <p class="text-gray-500 text-sm">&copy; 2026 HIPMI Kabupaten Indramayu. Membangun Pengusaha Muda Tangguh.</p>
+                </div>
+                <div class="flex space-x-5">
+                    <a href="https://www.instagram.com/hipmi.indramayu" target="_blank" class="text-gray-400 hover:text-pink-600 transition text-xl"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/hipmiindramayu" target="_blank" class="text-gray-400 hover:text-blue-700 transition text-xl"><i class="fab fa-facebook"></i></a>
+                    <a href="https://wa.me/6281234567890" target="_blank" class="text-gray-400 hover:text-green-500 transition text-xl"><i class="fab fa-whatsapp"></i></a>
+                    <a href="mailto:hipmi@indramayukab.go.id" class="text-gray-400 hover:text-red-500 transition text-xl"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ---------- Data Storage ----------
+        let contacts = [];
+        // Data Berita (default + bisa ditambah via admin nanti)
+        let beritaList = [
+            { id: 'b1', judul: 'HIPMI Indramayu Gelar Pelatihan UMKM Digital', tanggal: '15 Maret 2026', konten: 'Bertempat di Aula Dinas Koperasi, pelatihan diikuti 50 peserta. Membahas strategi pemasaran online dan optimalisasi marketplace.', gambar: 'https://i.ibb.co.com/qMfp91kQ/DSC09659-2.jpg', author: 'Admin' },
+            { id: 'b2', judul: 'Sinergi HIPMI dengan Perbankan untuk KUR', tanggal: '22 Februari 2026', konten: 'HIPMI Indramayu menjalin MoU dengan Bank BRI dan BNI untuk mempermudah akses permodalan anggota.', gambar: 'https://i.ibb.co.com/BKGwcJ9M/DSC09624-2.jpg', author: 'Admin' },
+            { id: 'b3', judul: 'Bazar UMKM meriahkan HUT Indramayu', tanggal: '5 Februari 2026', konten: 'Lebih dari 30 stand UMKM binaan HIPMI turut memeriahkan Hari Jadi Indramayu ke-497.', gambar: 'https://i.ibb.co.com/K4Fwjyy/hipmi-indramayu.jpg', author: 'Admin' }
+        ];
+
+        let isLoggedIn = false; // status session sederhana (demo)
+
+        function loadContactsFromStorage() {
+            const stored = localStorage.getItem('hipmi_crm_contacts');
+            if (stored) {
+                contacts = JSON.parse(stored);
+            } else {
+                contacts = [
+                    { id: '1', nama: 'Ahmad Fauzi', email: 'ahmad.fauzi@example.com', phone: '081234567890', perusahaan: 'PT Maju Jaya', jabatan: 'Owner', tgl_daftar: '2026-01-15', status: 'Aktif' },
+                    { id: '2', nama: 'Siti Rahayu', email: 'siti.rahayu@example.com', phone: '082345678901', perusahaan: 'CV Kreatif Mandiri', jabatan: 'Direktur', tgl_daftar: '2026-02-10', status: 'Aktif' },
+                ];
+                saveContactsToStorage();
+            }
+        }
+        function saveContactsToStorage() {
+            localStorage.setItem('hipmi_crm_contacts', JSON.stringify(contacts));
+        }
+        function saveBeritaToStorage() {
+            localStorage.setItem('hipmi_berita', JSON.stringify(beritaList));
+        }
+        function loadBeritaFromStorage() {
+            const stored = localStorage.getItem('hipmi_berita');
+            if(stored) beritaList = JSON.parse(stored);
+            else saveBeritaToStorage();
+        }
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function addContact(contactData) {
+            const newContact = {
+                id: generateId(),
+                ...contactData,
+                tgl_daftar: new Date().toISOString().slice(0,10),
+                status: 'Aktif'
+            };
+            contacts.push(newContact);
+            saveContactsToStorage();
+            return newContact;
+        }
+        function deleteContact(id) {
+            contacts = contacts.filter(c => c.id !== id);
+            saveContactsToStorage();
+        }
+
+        // --------------------- RENDER HALAMAN ---------------------
+        let currentPage = 'home';
+        let crmChart = null;
+        let swiperInstance = null;
+
+        function renderPage(page) {
+            currentPage = page;
+            const root = document.getElementById('app-root');
+            if (!root) return;
+            if (page === 'home') root.innerHTML = renderHome();
+            else if (page === 'profile') root.innerHTML = renderProfile();
+            else if (page === 'visimisi') root.innerHTML = renderVisiMisi();
+            else if (page === 'berita') root.innerHTML = renderBerita();
+            else if (page === 'pendaftaran') root.innerHTML = renderPendaftaran();
+            else if (page === 'kontak') root.innerHTML = renderKontak();
+            else if (page === 'crm') {
+                if(!isLoggedIn) {
+                    alert("Silakan login terlebih dahulu untuk mengakses dashboard CRM.");
+                    renderPage('home');
+                    return;
+                }
+                root.innerHTML = renderCRM();
+            }
+            attachPageSpecificEvents(page);
+            updateActiveMenu(page);
+            
+            if (page === 'home') {
+                initSwiper();
+            }
+            // Panggil event kontak jika halaman kontak
+            if (page === 'kontak') {
+                attachKontakEvent();
+            }
+        }
+
+        function attachKontakEvent() {
+            const formPesan = document.getElementById('quickMessageForm');
+            if(formPesan) {
+                // Hapus event listener lama untuk mencegah duplikasi
+                const newForm = formPesan.cloneNode(true);
+                formPesan.parentNode.replaceChild(newForm, formPesan);
+                newForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const nama = document.getElementById('msgNama').value;
+                    const email = document.getElementById('msgEmail').value;
+                    const pesan = document.getElementById('msgPesan').value;
+                    
+                    // Simpan ke localStorage atau tampilkan notifikasi
+                    alert(`Terima kasih ${nama}! Pesan Anda telah terkirim.\n\nKami akan membalas ke ${email} dalam 1x24 jam.`);
+                    
+                    // Optional: simpan ke storage untuk admin
+                    const messages = JSON.parse(localStorage.getItem('kontak_messages') || '[]');
+                    messages.push({ nama, email, pesan, tanggal: new Date().toISOString() });
+                    localStorage.setItem('kontak_messages', JSON.stringify(messages));
+                    
+                    newForm.reset();
+                });
+            }
+        }
+
+        function updateActiveMenu(page) {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if(link.getAttribute('data-page') === page) {
+                    link.classList.add('text-primary', 'font-semibold', 'border-b-2', 'border-primary');
+                    link.classList.remove('text-gray-700');
+                } else {
+                    link.classList.remove('text-primary', 'font-semibold', 'border-b-2', 'border-primary');
+                    link.classList.add('text-gray-700');
+                }
+            });
+            document.querySelectorAll('.nav-link-mobile').forEach(link => {
+                if(link.getAttribute('data-page') === page) {
+                    link.classList.add('text-primary', 'bg-gray-50');
+                } else {
+                    link.classList.remove('text-primary', 'bg-gray-50');
+                }
+            });
+        }
+
+        // ---------- HALAMAN HOME ----------
+        function renderHome() {
+            return `
+            <div class="hero-with-bg">
+                <div class="max-w-7xl mx-auto px-4 py-12 md:py-20">
+                    <div class="flex flex-col lg:flex-row items-center justify-between gap-12">
+                        <div class="flex-1 space-y-6 text-center lg:text-left">
+                            <div class="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-1.5 shadow-sm text-sm font-medium text-primary border border-yellow-200">
+                                <i class="fas fa-fire"></i> <span>Penggerak Ekonomi Kerakyatan</span>
+                            </div>
+                            <h1 class="text-4xl md:text-6xl font-bold leading-tight text-gray-900 drop-shadow-lg">Sinergi Pengusaha Muda <span class="text-yellow-300">Indramayu</span> Maju</h1>
+                            <p class="text-white/90 text-lg max-w-xl mx-auto lg:mx-0 drop-shadow">Wadah kolaborasi, pemberdayaan, dan pengembangan wirausaha muda untuk mewujudkan Indramayu yang maju.</p>
+                            <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+                                <button data-nav="pendaftaran" class="btn-primary text-white px-6 py-3 rounded-xl shadow-lg font-semibold flex items-center gap-2"><i class="fas fa-user-plus"></i> Gabung Sekarang</button>
+                                <button data-nav="profile" class="bg-white/20 backdrop-blur-sm border border-white text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/30 transition flex items-center gap-2"><i class="fas fa-info-circle"></i> Pelajari Lebih</button>
+                            </div>
+                        </div>
+                        <div class="flex-1 flex justify-center">
+                            <div class="glass-card p-4 w-full max-w-md text-center">
+                                <div class="bg-primary/20 w-28 h-28 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <img src="https://i.ibb.co.com/mr29LXQ6/logo-hipmi-indramayu.png" alt="Logo" class="w-full h-full object-contain">
+                                </div>
+                                <h4 class="text-2xl font-bold text-white">BPC HIPMI KAB. INDRAMAYU</h4>
+                                <p class="text-white mt-2">Badan Pengurus Cabang resmi di bawah DPD HIPMI Jawa Barat. Berkomitmen mencetak entrepreneur muda tangguh berbasis potensi lokal.</p>
+                                <div class="mt-5 grid grid-cols-2 gap-2 text-sm">
+                                    <div class="bg-white rounded-xl p-2 shadow-sm"><i class="fas fa-users text-primary"></i> <span class="font-bold">100+</span><br>Anggota Aktif</div>
+                                    <div class="bg-white rounded-xl p-2 shadow-sm"><i class="fas fa-chalkboard-user text-primary"></i> <span class="font-bold">10+</span><br>Program Tahunan</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-center mb-8">Galeri <span class="text-primary">Kegiatan HIPMI Indramayu</span></h2>
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide relative"><img src="https://i.ibb.co.com/K4Fwjyy/hipmi-indramayu.jpg" alt="Kegiatan 1"><div class="absolute bottom-0 left-0 bg-black/60 text-white p-4 rounded-b-2xl w-full"><h3 class="font-bold">Judul Gambar Kegiatan 1</h3><p class="text-sm">Deskripsi Kegiatan 1</p></div></div>
+                        <div class="swiper-slide relative"><img src="https://i.ibb.co.com/qMfp91kQ/DSC09659-2.jpg" alt="Kegiatan 2"><div class="absolute bottom-0 left-0 bg-black/60 text-white p-4 rounded-b-2xl w-full"><h3 class="font-bold">Judul Gambar Kegiatan 2</h3><p class="text-sm">Deskripsi Kegiatan 2</p></div></div>
+                        <div class="swiper-slide relative"><img src="https://i.ibb.co.com/BKGwcJ9M/DSC09624-2.jpg" alt="Kegiatan 3"><div class="absolute bottom-0 left-0 bg-black/60 text-white p-4 rounded-b-2xl w-full"><h3 class="font-bold">Judul Gambar Kegiatan 2</h3><p class="text-sm">Deskripsi Kegiatan 3</p></div></div>
+                    </div>
+                    <div class="swiper-button-next"></div><div class="swiper-button-prev"></div><div class="swiper-pagination"></div>
+                </div>
+            </div>
+            <div class="max-w-7xl mx-auto px-4 pb-16">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition text-center"><i class="fas fa-calendar-alt text-primary text-3xl mb-3"></i><h4 class="font-bold text-xl">Didirikan 1972</h4><p class="text-gray-500">Cabang Indramayu aktif sejak 2002.</p></div>
+                    <div class="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition text-center"><i class="fas fa-handshake text-primary text-3xl mb-3"></i><h4 class="font-bold text-xl">Kemitraan Strategis</h4><p class="text-gray-500">Sinergi dengan Pemda, BUMN, dan Perbankan.</p></div>
+                    <div class="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition text-center"><i class="fas fa-chart-line text-primary text-3xl mb-3"></i><h4 class="font-bold text-xl">Pendampingan UMKM</h4><p class="text-gray-500">Program inkubasi bisnis berkala.</p></div>
+                </div>
+            </div>`;
+        }
+
+        function initSwiper() {
+            if (swiperInstance) swiperInstance.destroy(true, true);
+            // Tunggu sebentar agar DOM siap
+            setTimeout(() => {
+                if (document.querySelector('.mySwiper')) {
+                    swiperInstance = new Swiper('.mySwiper', {
+                        loop: true, autoplay: { delay: 4000, disableOnInteraction: false },
+                        pagination: { el: '.swiper-pagination', clickable: true },
+                        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+                    });
+                }
+            }, 100);
+        }
+
+        // ---------- HALAMAN BERITA ----------
+        function renderBerita() {
+            let cards = '';
+            beritaList.forEach(berita => {
+                cards += `
+                    <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 transition hover:shadow-xl">
+                        <img src="${berita.gambar}" class="h-48 w-full object-cover" alt="${berita.judul}">
+                        <div class="p-5">
+                            <div class="flex justify-between items-center text-xs text-gray-400 mb-2"><span><i class="far fa-calendar-alt"></i> ${berita.tanggal}</span><span><i class="far fa-user"></i> ${berita.author}</span></div>
+                            <h3 class="font-bold text-xl mb-2">${berita.judul}</h3>
+                            <p class="text-gray-600 line-clamp-3">${berita.konten.substring(0, 120)}...</p>
+                            <button onclick="viewBeritaDetail('${berita.id}')" class="mt-4 text-primary font-semibold flex items-center gap-1">Baca Selengkapnya <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>`;
+            });
+            return `
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <div class="text-center mb-10"><h2 class="text-3xl font-bold">Berita & <span class="text-primary">Informasi Terkini</span></h2><div class="w-20 h-1 bg-primary mx-auto mt-2"></div></div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">${cards}</div>
+                ${isLoggedIn ? `<div class="mt-12 text-center"><button id="adminAddBeritaBtn" class="bg-gray-800 text-white px-6 py-3 rounded-xl shadow"><i class="fas fa-plus-circle"></i> Tambah Berita (Admin)</button></div>` : ''}
+            </div>`;
+        }
+
+        window.viewBeritaDetail = (id) => {
+            const berita = beritaList.find(b => b.id === id);
+            if(berita) {
+                alert(`📰 ${berita.judul}\n\n${berita.konten}\n\nTanggal: ${berita.tanggal}\nPenulis: ${berita.author}`);
+            } else alert("Berita tidak ditemukan");
+        };
+
+        function addBerita(judul, konten, gambar, author) {
+            const newId = generateId();
+            const tanggal = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+            beritaList.unshift({ id: newId, judul, konten, gambar: gambar || 'https://i.ibb.co.com/K4Fwjyy/hipmi-indramayu.jpg', tanggal, author });
+            saveBeritaToStorage();
+            renderPage('berita');
+        }
+
+
+        // ---------- HALAMAN PROFIL ----------
+        function renderProfile() {
+            return `
+            <div class="max-w-7xl mx-auto px-4 py-12 space-y-12">
+                <div class="text-center max-w-2xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Profil <span class="text-primary">HIPMI Indramayu</span></h2>
+                    <div class="w-20 h-1 bg-primary mx-auto mt-3 rounded-full"></div>
+                    <p class="text-gray-500 mt-4">Menggerakkan ekonomi lokal dengan semangat kolaborasi dan inovasi.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-10 items-start">
+                    <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+                        <i class="fas fa-flag-checkered text-primary text-3xl mb-3"></i>
+                        <h3 class="text-2xl font-bold">Sejarah & Latar Belakang</h3>
+                        <p class="text-gray-600 mt-4 leading-relaxed">HIPMI (Himpunan Pengusaha Muda Indonesia) didirikan pada 10 Juni 1972 sebagai wadah independen non-partisan untuk memajukan kewirausahaan muda. HIPMI Kabupaten Indramayu (BPC HIPMI Indramayu) berdiri sejalan dengan semangat mendorong pengusaha lokal agar berperan aktif dalam pembangunan daerah.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+                        <i class="fas fa-bullseye text-primary text-3xl mb-3"></i>
+                        <h3 class="text-2xl font-bold">Tujuan Organisasi</h3>
+                        <ul class="mt-4 space-y-3 text-gray-600">
+                            <li><i class="fas fa-check-circle text-primary mr-2"></i> Menghimpun pengusaha muda di Kabupaten Indramayu.</li>
+                            <li><i class="fas fa-check-circle text-primary mr-2"></i> Meningkatkan kapasitas kewirausahaan & daya saing UMKM.</li>
+                            <li><i class="fas fa-check-circle text-primary mr-2"></i> Menjadi mitra strategis Pemda dalam penguatan ekonomi kerakyatan.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-6 shadow-sm">
+                    <h3 class="text-2xl font-bold text-center mb-6">Pengurus BPC HIPMI Indramayu</h3>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-center">
+                        <div class="bg-white p-5 rounded-xl shadow-sm"><i class="fas fa-user-tie text-primary text-3xl mb-2"></i><h4 class="font-bold">Taufiq Zaenal Mustofa</h4><p class="text-sm text-gray-500">Ketua Umum</p></div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm"><i class="fas fa-user-tie text-primary text-3xl mb-2"></i><h4 class="font-bold">Habibi Ariyanto</h4><p class="text-sm text-gray-500">Ketua Dewan Penasehat</p></div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm"><i class="fas fa-user-tie text-primary text-3xl mb-2"></i><h4 class="font-bold">Yoga Tris Sucipto</h4><p class="text-sm text-gray-500">Bendahara Umum</p></div>
+                    </div>
+                </div>
+            </div>`;
+        }
+        
+        // ---------- HALAMAN VISI MISI (Diperbaiki) ----------
+        function renderVisiMisi() {
+            return `
+            <div class="max-w-7xl mx-auto px-4 py-12 space-y-12">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold">Visi & Misi <span class="text-primary">BPC HIPMI Kab. Indramayu</span></h2>
+                </div>
+                <div class="bg-gradient-to-br from-white to-yellow-50 rounded-3xl p-8 shadow-xl border border-yellow-100">
+                    <div class="flex items-center gap-4 mb-4"><i class="fas fa-eye text-3xl text-primary"></i><h3 class="text-3xl font-bold">Visi</h3></div>
+                    <p class="text-gray-800 text-lg italic pl-12 border-l-4 border-primary">"Menjadi organisasi pengusaha muda yang inovatif, mandiri, dan berdaya saing dalam mendorong pertumbuhan ekonomi Kabupaten Indramayu."</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-white to-yellow-50 rounded-3xl p-8 shadow-xl border border-yellow-100">
+                    <div class="flex items-center gap-4 mb-4"><i class="fas fa-list-check text-3xl text-primary"></i><h3 class="text-3xl font-bold">Misi</h3></div>
+                    <ul class="list-unstyled space-y-3 pl-12">
+                        <li class="mb-2"><i class="fas fa-seedling text-primary me-2"></i> Mengembangkan jiwa kewirausahaan generasi muda.</li>
+                        <li class="mb-2"><i class="fas fa-chalkboard text-primary me-2"></i> Meningkatkan kapasitas anggota melalui pelatihan dan mentoring.</li>
+                        <li class="mb-2"><i class="fas fa-handshake text-primary me-2"></i> Membangun jejaring bisnis yang kuat.</li>
+                        <li class="mb-2"><i class="fas fa-building text-primary me-2"></i> Mendorong kolaborasi dengan pemerintah & swasta.</li>
+                        <li class="mb-2"><i class="fas fa-store text-primary me-2"></i> Mendukung pertumbuhan UMKM dan ekonomi daerah.</li>
+                    </ul>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-primary"><i class="fas fa-graduation-cap text-primary text-2xl mb-2"></i><h3 class="text-xl font-bold">Pendidikan & Pelatihan</h3><p class="text-gray-500 mt-2">Menggelar workshop, pelatihan digital, dan pendampingan UMKM.</p></div>
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-primary"><i class="fas fa-chart-line text-primary text-2xl mb-2"></i><h3 class="text-xl font-bold">Akses Pasar & Kolaborasi</h3><p class="text-gray-500 mt-2">Membangun kemitraan dengan pemerintah, BUMN, dan perbankan.</p></div>
+                    <div class="bg-white rounded-2xl p-6 shadow-md border-t-4 border-primary"><i class="fas fa-lightbulb text-primary text-2xl mb-2"></i><h3 class="text-xl font-bold">Ekonomi Kreatif & Digital</h3><p class="text-gray-500 mt-2">Mendorong transformasi digital dan pemanfaatan potensi lokal.</p></div>
+                </div>
+            </div>`;
+        }
+
+        // ---------- HALAMAN PENDAFTARAN (Hanya satu) ----------
+        function renderPendaftaran() {
+            return `
+            <div class="max-w-4xl mx-auto px-4 py-12">
+                <div class="bg-white rounded-3xl shadow-xl p-6 md:p-10 border border-gray-100">
+                    <div class="text-center mb-8">
+                        <i class="fas fa-clipboard-list text-primary text-5xl"></i>
+                        <h2 class="text-3xl font-bold mt-2">Formulir Keanggotaan</h2>
+                        <p class="text-gray-500">Isi data dengan benar untuk bergabung menjadi anggota HIPMI Indramayu</p>
+                    </div>
+                    <form id="registrationForm" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div><label class="block font-medium text-gray-700">Nama Lengkap *</label><input type="text" id="regNama" required class="w-full border border-gray-300 rounded-xl px-4 py-2 mt-1"></div>
+                            <div><label class="block font-medium text-gray-700">Email *</label><input type="email" id="regEmail" required class="w-full border border-gray-300 rounded-xl px-4 py-2 mt-1"></div>
+                            <div><label class="block font-medium text-gray-700">WhatsApp / No. HP *</label><input type="tel" id="regPhone" required class="w-full border border-gray-300 rounded-xl px-4 py-2 mt-1"></div>
+                            <div><label class="block font-medium text-gray-700">Nama Perusahaan / Usaha *</label><input type="text" id="regCompany" required class="w-full border border-gray-300 rounded-xl px-4 py-2 mt-1"></div>
+                        </div>
+                        <div class="text-right"><button type="submit" class="btn-primary text-white px-8 py-3 rounded-xl font-semibold">Daftar Sekarang <i class="fas fa-arrow-right"></i></button></div>
+                    </form>
+                </div>
+            </div>`;
+        }
+
+        // ---------- HALAMAN KONTAK ----------
+        function renderKontak() {
+            return `
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Hubungi <span class="text-primary">Kami</span></h2>
+                    <div class="w-20 h-1 bg-primary mx-auto mt-3 rounded-full"></div>
+                    <p class="text-gray-500 mt-4 max-w-2xl mx-auto">Sampaikan pertanyaan, masukan, atau kerja sama dengan tim sekretariat HIPMI Kabupaten Indramayu</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-10">
+                    <!-- Informasi Kontak -->
+                    <div class="space-y-6">
+                        <!-- Sekretariat -->
+                        <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-building text-primary text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-xl text-gray-800">Sekretariat</h3>
+                                    <p class="text-gray-600 mt-1">Jl. Jend. Sudirman No.71, RT.01/RW.01, Lemahabang, Kec. Indramayu, Kabupaten Indramayu, Jawa Barat 45212</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Telepon -->
+                        <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-phone-alt text-primary text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-xl text-gray-800">Telepon</h3>
+                                    <p class="text-gray-600 mt-1">+62 234 5678 910</p>
+                                    <p class="text-gray-400 text-sm mt-1">(Jam kerja: Senin-Jumat 09.00-17.00)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-envelope text-primary text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-xl text-gray-800">Email</h3>
+                                    <p class="text-gray-600 mt-1">info@hipmi-indramayu.org</p>
+                                    <a href="mailto:info@hipmi-indramayu.org" class="text-primary text-sm hover:underline mt-1 inline-block">Kirim pesan →</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Jam Operasional -->
+                        <div class="bg-gradient-to-r from-yellow-50 to-green-50 rounded-2xl p-6 shadow-md border border-yellow-100">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-clock text-primary text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-xl text-gray-800">Jam Operasional</h3>
+                                    <p class="text-gray-700 mt-1"><i class="fas fa-check-circle text-primary text-sm mr-2"></i>Senin - Jumat : 09.00 - 17.00 WIB</p>
+                                    <p class="text-gray-400 text-sm mt-2">*Kantor tutup pada hari Sabtu, Minggu & Hari Libur Nasional</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lokasi Strategis -->
+                        <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                            <div class="flex items-start gap-4">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-map-marker-alt text-primary text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-xl text-gray-800">📍 Lokasi Strategis</h3>
+                                    <p class="text-gray-600 mt-1">Kantor HIPMI Kabupaten Indramayu</p>
+                                    <p class="text-gray-500 text-sm mt-2">Berada di pusat kota, mudah diakses dari berbagai arah. Tersedia area parkir luas.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Pesan Cepat + Maps -->
+                    <div class="space-y-6">
+                        <!-- Form Kirim Pesan -->
+                        <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+                            <h3 class="font-bold text-xl text-gray-800 mb-4"><i class="fas fa-paper-plane text-primary mr-2"></i>Kirim Pesan</h3>
+                            <form id="quickMessageForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                                    <input type="text" id="msgNama" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <input type="email" id="msgEmail" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Pesan</label>
+                                    <textarea id="msgPesan" rows="4" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary"></textarea>
+                                </div>
+                                <button type="submit" class="btn-primary text-white px-6 py-2.5 rounded-xl font-semibold w-full">
+                                    <i class="fas fa-paper-plane mr-2"></i>Kirim Pesan
+                                </button>
+                            </form>
+                            <p class="text-xs text-gray-400 text-center mt-4">*Pesan akan dibalas melalui email dalam 1x24 jam</p>
+                        </div>
+
+                        <!-- Google Maps Embed (placeholder - ganti dengan embed maps asli) -->
+                        <div class="bg-gray-100 rounded-2xl overflow-hidden shadow-md h-64">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.4782752836927!2d108.3308222!3d-6.3320275!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6eb945810729d3%3A0x7750fd76c631b2c8!2sHIPMI%20INDRAMAYU!5e0!3m2!1sid!2sid!4v1780934927098!5m2!1sid!2sid" 
+                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Social Media Links -->
+                <div class="mt-12 text-center">
+                    <h3 class="font-semibold text-gray-700 mb-4">Ikuti Kami di Sosial Media</h3>
+                    <div class="flex justify-center gap-4">
+                        <a href="https://www.instagram.com/hipmi.indramayu" target="_blank" class="w-10 h-10 bg-gradient-to-br from-pink-500 to-orange-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.facebook.com/hipmiindramayu" target="_blank" class="w-10 h-10 bg-blue-700 rounded-full flex items-center justify-center text-white hover:scale-110 transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://wa.me/6282345678910" target="_blank" class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.youtube.com/@hipmiindramayu" target="_blank" class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white hover:scale-110 transition"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // ---------- HALAMAN CRM (dashboard admin) ----------
+        function renderCRM() {
+            let rows = '';
+            contacts.forEach(contact => {
+                rows += `<tr class="border-b"><td class="px-4 py-3">${contact.nama}</td><td class="px-4 py-3">${contact.email}</td><td class="px-4 py-3">${contact.phone}</td><td class="px-4 py-3">${contact.perusahaan}</td><td class="px-4 py-3">${contact.tgl_daftar}</td><td class="px-4 py-3"><button onclick="deleteContactUI('${contact.id}')" class="text-red-500"><i class="fas fa-trash-alt"></i></button></td></tr>`;
+            });
+            return `<div class="max-w-7xl mx-auto px-4 py-10"><h2 class="text-3xl font-bold">Dashboard Admin & CRM</h2><div class="overflow-x-auto mt-6 bg-white rounded-2xl shadow"><table class="min-w-full"><thead class="bg-primary text-white"><tr><th class="p-3">Nama</th><th>Email</th><th>Telepon</th><th>Perusahaan</th><th>Tgl Daftar</th><th>Aksi</th></tr></thead><tbody>${rows}</tbody></table></div><div class="mt-6 text-right"><button id="logoutAdminBtn" class="bg-red-500 text-white px-4 py-2 rounded-xl">Logout</button></div></div>`;
+        }
+
+        function attachPageSpecificEvents(page) {
+            if(page === 'pendaftaran') {
+                const form = document.getElementById('registrationForm');
+                if(form) {
+                    // Hapus event listener lama dengan clone
+                    const newForm = form.cloneNode(true);
+                    form.parentNode.replaceChild(newForm, form);
+                    newForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        addContact({ 
+                            nama: document.getElementById('regNama').value, 
+                            email: document.getElementById('regEmail').value, 
+                            phone: document.getElementById('regPhone').value, 
+                            perusahaan: document.getElementById('regCompany').value 
+                        });
+                        alert('Pendaftaran berhasil!'); 
+                        newForm.reset();
+                    });
+                }
+            }
+            if(page === 'berita' && isLoggedIn) {
+                // Tunggu sebentar agar DOM siap
+                setTimeout(() => {
+                    const btn = document.getElementById('adminAddBeritaBtn');
+                    if(btn) {
+                        const newBtn = btn.cloneNode(true);
+                        btn.parentNode.replaceChild(newBtn, btn);
+                        newBtn.onclick = () => {
+                            let judul = prompt("Judul Berita");
+                            if(judul) {
+                                let konten = prompt("Isi Berita");
+                                let gambar = prompt("URL Gambar (opsional)", "https://i.ibb.co.com/K4Fwjyy/hipmi-indramayu.jpg");
+                                addBerita(judul, konten, gambar, "Admin");
+                            }
+                        };
+                    }
+                }, 50);
+            }
+            if(page === 'crm') {
+                setTimeout(() => {
+                    const logoutBtn = document.getElementById('logoutAdminBtn');
+                    if(logoutBtn) {
+                        const newBtn = logoutBtn.cloneNode(true);
+                        logoutBtn.parentNode.replaceChild(newBtn, logoutBtn);
+                        newBtn.onclick = () => { isLoggedIn = false; renderPage('home'); alert("Anda telah logout."); };
+                    }
+                }, 50);
+            }
+        }
+
+        window.deleteContactUI = function(id) {
+            if(confirm('Hapus kontak ini?')) { deleteContact(id); if(currentPage === 'crm') renderPage('crm'); }
+        };
+
+        // LOGIN HANDLER
+        function setupLogin() {
+            const modal = document.getElementById('loginModal');
+            const showModal = () => { modal.classList.remove('hidden'); };
+            const hideModal = () => { modal.classList.add('hidden'); };
+            
+            const loginBtn = document.getElementById('loginBtnNav');
+            const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+            const mobileLoginNavLink = document.getElementById('mobileLoginNavLink');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            
+            if(loginBtn) loginBtn.addEventListener('click', (e) => { e.preventDefault(); showModal(); });
+            if(mobileLoginBtn) mobileLoginBtn.addEventListener('click', showModal);
+            if(mobileLoginNavLink) mobileLoginNavLink.addEventListener('click', (e) => { e.preventDefault(); showModal(); });
+            if(closeModalBtn) closeModalBtn.addEventListener('click', hideModal);
+            
+            window.addEventListener('click', (e) => { if(e.target === modal) hideModal(); });
+            
+            const loginForm = document.getElementById('loginFormModal');
+            if(loginForm) {
+                loginForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const user = document.getElementById('loginUsername').value;
+                    const pass = document.getElementById('loginPassword').value;
+                    if(user === 'admin' && pass === 'admin123') {
+                        isLoggedIn = true;
+                        hideModal();
+                        renderPage('crm');
+                    } else {
+                        alert("Username atau password salah! (demo: admin / admin123)");
+                    }
+                });
+            }
+        }
+
+        function bindNavigation() {
+            document.body.addEventListener('click', (e) => {
+                const link = e.target.closest('[data-page]');
+                if(link && link.getAttribute('data-page')) {
+                    e.preventDefault();
+                    const target = link.getAttribute('data-page');
+                    if(target === 'crm' && !isLoggedIn) { alert("Silakan login untuk mengakses CRM."); return; }
+                    renderPage(target);
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if(mobileMenu) mobileMenu.classList.add('hidden');
+                }
+                const navBtn = e.target.closest('[data-nav]');
+                if(navBtn && navBtn.getAttribute('data-nav')) {
+                    renderPage(navBtn.getAttribute('data-nav'));
+                }
+            });
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            if(mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if(mobileMenu) mobileMenu.classList.toggle('hidden');
+                });
+            }
+        }
+
+        loadContactsFromStorage();
+        loadBeritaFromStorage();
+        bindNavigation();
+        setupLogin();
+        renderPage('home');
+    </script>
+</body>
+</html>
